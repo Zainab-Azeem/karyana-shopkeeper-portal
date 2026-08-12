@@ -44,7 +44,7 @@ export default function CategoryForm({
 
     formData.append("shop_id", user?.shop_id);
     formData.append("name", data.name);
-    formData.append("description", data.description);
+    formData.append("description", data.description || "");
     formData.append("status", data.status);
 
     if (category) {
@@ -56,12 +56,15 @@ export default function CategoryForm({
     onSuccess();
   };
 
+  const inputStyle =
+    "w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-xl">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-4 sm:px-6 sm:py-5">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">
+            <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
               {category ? "Edit Category" : "Add Category"}
             </h2>
 
@@ -81,16 +84,16 @@ export default function CategoryForm({
 
         <form
           onSubmit={handleSubmit(submitForm)}
-          className="space-y-5 p-6"
+          className="space-y-5 p-4 sm:p-6"
         >
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               Category Name
             </label>
 
             <input
               placeholder="e.g. Beverages"
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
+              className={inputStyle}
               {...register("name", {
                 required: "Category name is required",
               })}
@@ -104,25 +107,25 @@ export default function CategoryForm({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               Description
             </label>
 
             <textarea
               rows="4"
               placeholder="Enter category description"
-              className="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
+              className={`${inputStyle} resize-none`}
               {...register("description")}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               Status
             </label>
 
             <select
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
+              className={inputStyle}
               {...register("status")}
             >
               <option value="Active">Active</option>
@@ -130,11 +133,11 @@ export default function CategoryForm({
             </select>
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
+          <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50"
+              className="w-full rounded-xl border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
             >
               Cancel
             </button>
@@ -142,7 +145,7 @@ export default function CategoryForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
             >
               {isSubmitting && (
                 <Loader2 size={18} className="animate-spin" />
