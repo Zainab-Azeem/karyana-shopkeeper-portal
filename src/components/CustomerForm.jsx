@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Loader2, X } from "lucide-react";
+import { toast } from "react-toastify";
 
 import {
   addCustomer,
@@ -48,25 +49,49 @@ export default function CustomerForm({
   }, [customer, reset]);
 
   const submitForm = async (data) => {
-    const values = {
-      shop_id: user?.shop_id,
-      name: data.name,
-      phone: data.phone,
-      email: data.email || "",
-      address: data.address || "",
-      opening_balance: Number(data.opening_balance || 0),
-      current_balance: Number(data.opening_balance || 0),
-      credit_limit: Number(data.credit_limit || 0),
-      status: data.status,
-    };
+    try {
+      if (customer) {
+        const values = {
+          name: data.name.trim(),
+          phone: data.phone.trim(),
+          email: data.email?.trim() || "",
+          address: data.address?.trim() || "",
+          credit_limit: Number(data.credit_limit || 0),
+          status: data.status,
+        };
 
-    if (customer) {
-      await updateCustomer(customer.id, values);
-    } else {
-      await addCustomer(values);
+        await updateCustomer(customer.id, values);
+      } else {
+        const openingBalance = Number(
+          data.opening_balance || 0
+        );
+
+        const values = {
+          shop_id: user?.shop_id,
+          name: data.name.trim(),
+          phone: data.phone.trim(),
+          email: data.email?.trim() || "",
+          address: data.address?.trim() || "",
+          opening_balance: openingBalance,
+          current_balance: openingBalance,
+          credit_limit: Number(
+            data.credit_limit || 0
+          ),
+          status: data.status,
+        };
+
+        await addCustomer(values);
+      }
+
+      onSuccess();
+    } catch (error) {
+      console.log(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Unable to save customer."
+      );
     }
-
-    onSuccess();
   };
 
   const inputStyle =
@@ -194,29 +219,32 @@ export default function CustomerForm({
             />
           </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Opening Balance
-            </label>
+          {!customer && (
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Opening Balance
+              </label>
 
-            <input
-              type="number"
-              step="0.01"
-              className={inputStyle}
-              {...register("opening_balance", {
-                min: {
-                  value: 0,
-                  message: "Opening balance cannot be negative",
-                },
-              })}
-            />
+              <input
+                type="number"
+                step="0.01"
+                className={inputStyle}
+                {...register("opening_balance", {
+                  min: {
+                    value: 0,
+                    message:
+                      "Opening balance cannot be negative",
+                  },
+                })}
+              />
 
-            {errors.opening_balance && (
-              <p className={errorStyle}>
-                {errors.opening_balance.message}
-              </p>
-            )}
-          </div>
+              {errors.opening_balance && (
+                <p className={errorStyle}>
+                  {errors.opening_balance.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -230,7 +258,8 @@ export default function CustomerForm({
               {...register("credit_limit", {
                 min: {
                   value: 0,
-                  message: "Credit limit cannot be negative",
+                  message:
+                    "Credit limit cannot be negative",
                 },
               })}
             />

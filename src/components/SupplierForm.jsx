@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Loader2, X } from "lucide-react";
+import { toast } from "react-toastify";
 
 import {
   addSupplier,
@@ -23,6 +24,7 @@ export default function SupplierForm({
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
+      supplier_code: "",
       name: "",
       contact_person: "",
       phone: "",
@@ -35,6 +37,7 @@ export default function SupplierForm({
   useEffect(() => {
     if (supplier) {
       reset({
+        supplier_code: supplier.supplier_code || "",
         name: supplier.name || "",
         contact_person: supplier.contact_person || "",
         phone: supplier.phone || "",
@@ -46,23 +49,34 @@ export default function SupplierForm({
   }, [supplier, reset]);
 
   const submitForm = async (data) => {
-    const values = {
-      shop_id: user?.shop_id,
-      name: data.name,
-      contact_person: data.contact_person || "",
-      phone: data.phone || "",
-      email: data.email || "",
-      address: data.address || "",
-      status: data.status,
-    };
+    try {
+      const values = {
+        shop_id: user?.shop_id,
+        supplier_code: data.supplier_code.trim(),
+        name: data.name.trim(),
+        contact_person: data.contact_person?.trim() || "",
+        phone: data.phone?.trim() || "",
+        email: data.email?.trim() || "",
+        address: data.address?.trim() || "",
+        status: data.status,
+      };
 
-    if (supplier) {
-      await updateSupplier(supplier.id, values);
-    } else {
-      await addSupplier(values);
+      if (supplier) {
+        await updateSupplier(supplier.id, values);
+      } else {
+        await addSupplier(values);
+      }
+
+      onSuccess();
+    } catch (error) {
+      console.log(error);
+
+      const message =
+        error.response?.data?.message ||
+        "Unable to save supplier.";
+
+      toast.error(message);
     }
-
-    onSuccess();
   };
 
   const inputStyle =
@@ -98,6 +112,33 @@ export default function SupplierForm({
           onSubmit={handleSubmit(submitForm)}
           className="grid gap-5 p-4 sm:grid-cols-2 sm:p-6"
         >
+          {/* Supplier Code */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Supplier Code
+            </label>
+
+            <input
+              placeholder="e.g. SUP-001"
+              className={inputStyle}
+              {...register("supplier_code", {
+                required: "Supplier code is required",
+                pattern: {
+                  value: /^[A-Za-z0-9_-]+$/,
+                  message:
+                    "Supplier code can only contain letters, numbers, - and _",
+                },
+              })}
+            />
+
+            {errors.supplier_code && (
+              <p className={errorStyle}>
+                {errors.supplier_code.message}
+              </p>
+            )}
+          </div>
+
+          {/* Supplier Name */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
               Supplier Name
@@ -117,6 +158,7 @@ export default function SupplierForm({
             )}
           </div>
 
+          {/* Contact Person */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
               Contact Person
@@ -128,6 +170,7 @@ export default function SupplierForm({
             />
           </div>
 
+          {/* Phone */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
               Phone Number
@@ -151,6 +194,7 @@ export default function SupplierForm({
             )}
           </div>
 
+          {/* Email */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
               Email
@@ -174,18 +218,7 @@ export default function SupplierForm({
             )}
           </div>
 
-          <div className="sm:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Address
-            </label>
-
-            <textarea
-              rows="3"
-              className={`${inputStyle} resize-none`}
-              {...register("address")}
-            />
-          </div>
-
+          {/* Status */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
               Status
@@ -200,6 +233,20 @@ export default function SupplierForm({
             </select>
           </div>
 
+          {/* Address */}
+          <div className="sm:col-span-2">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Address
+            </label>
+
+            <textarea
+              rows="3"
+              className={`${inputStyle} resize-none`}
+              {...register("address")}
+            />
+          </div>
+
+          {/* Buttons */}
           <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:col-span-2 sm:flex-row sm:justify-end">
             <button
               type="button"
