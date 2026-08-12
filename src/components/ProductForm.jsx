@@ -1,8 +1,16 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { X, Loader2 } from "lucide-react";
+import {
+  X,
+  Loader2,
+  Package,
+} from "lucide-react";
 
-import { addProduct, updateProduct } from "../api/ProductApi";
+import {
+  addProduct,
+  updateProduct,
+} from "../api/ProductApi";
+
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-toastify";
 
@@ -51,250 +59,347 @@ export default function ProductForm({
     }
   }, [product, reset]);
 
-const submitForm = async (values) => {
-  try {
-    const formData = new FormData();
+  const submitForm = async (values) => {
+    try {
+      const formData = new FormData();
 
-    formData.append("shop_id", user?.shop_id);
-    formData.append("name", values.name);
-    formData.append("sku", values.sku || "");
-    formData.append("barcode", values.barcode || "");
-    formData.append("category_id", values.category_id);
-    formData.append("purchase_price", values.purchase_price);
-    formData.append("selling_price", values.selling_price);
-    formData.append("stock_quantity", values.stock_quantity);
-    formData.append("opening_stock", values.stock_quantity);
-    formData.append("unit", values.unit);
-    formData.append("min_stock_level", values.min_stock_level);
-    formData.append("status", values.status);
-    formData.append("currency", "Rs.");
+      formData.append("shop_id", user?.shop_id);
+      formData.append("name", values.name);
+      formData.append("sku", values.sku || "");
+      formData.append("barcode", values.barcode || "");
+      formData.append("category_id", values.category_id);
+      formData.append("purchase_price", values.purchase_price);
+      formData.append("selling_price", values.selling_price);
+      formData.append("stock_quantity", values.stock_quantity);
+      formData.append("opening_stock", values.stock_quantity);
+      formData.append("unit", values.unit);
+      formData.append("min_stock_level", values.min_stock_level);
+      formData.append("status", values.status);
+      formData.append("currency", "Rs.");
 
-    if (product) {
-      await updateProduct(product.id, formData);
-    } else {
-      await addProduct(formData);
+      if (product) {
+        await updateProduct(product.id, formData);
+      } else {
+        await addProduct(formData);
+      }
+
+      onSuccess();
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        "Unable to save product.";
+
+      toast.error(message);
     }
-
-    onSuccess();
-  } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      "Unable to save product.";
-
-    toast.error(message);
-  }
-};
+  };
 
   const inputStyle =
-    "w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600";
+    "w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50";
 
-  const errorStyle = "mt-1 text-sm text-red-500";
+  const errorStyle =
+    "mt-1.5 text-xs font-medium text-red-500";
+
+  const labelStyle =
+    "mb-2 block text-sm font-semibold text-slate-700";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">
-              {product ? "Edit Product" : "Add Product"}
-            </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-3 backdrop-blur-[3px] sm:p-4">
+      <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[24px] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.18)]">
 
-            <p className="mt-1 text-sm text-slate-500">
-              Enter product information below.
-            </p>
+        {/* Header */}
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-5 py-5 backdrop-blur-xl sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+              <Package size={21} />
+            </div>
+
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-indigo-500">
+                Inventory
+              </p>
+
+              <h2 className="mt-0.5 text-lg font-bold tracking-tight text-slate-950 sm:text-xl">
+                {product
+                  ? "Edit Product"
+                  : "Add Product"}
+              </h2>
+
+              <p className="mt-0.5 text-xs text-slate-500">
+                Enter product information below.
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
           >
-            <X size={20} />
+            <X size={19} />
           </button>
         </div>
 
         {/* Form */}
         <form
           onSubmit={handleSubmit(submitForm)}
-          className="grid gap-5 p-6 sm:grid-cols-2"
+          className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6"
         >
           {/* Product Name */}
           <div className="sm:col-span-2">
-            <label className="mb-2 block text-sm font-medium">
+            <label className={labelStyle}>
               Product Name
             </label>
 
             <input
+              placeholder="Enter product name"
               className={inputStyle}
               {...register("name", {
-                required: "Product name is required",
+                required:
+                  "Product name is required",
               })}
             />
 
-            {errors.name && <p className={errorStyle}>{errors.name.message}</p>}
+            {errors.name && (
+              <p className={errorStyle}>
+                {errors.name.message}
+              </p>
+            )}
           </div>
 
           {/* SKU */}
           <div>
-            <label className="mb-2 block text-sm font-medium">SKU</label>
+            <label className={labelStyle}>
+              SKU
+            </label>
 
             <input
+              placeholder="e.g. PROD-001"
               className={inputStyle}
               {...register("sku", {
                 pattern: {
                   value: /^[A-Za-z0-9_-]+$/,
-                  message: "SKU can only contain letters, numbers, - and _",
+                  message:
+                    "SKU can only contain letters, numbers, - and _",
                 },
               })}
             />
 
-            {errors.sku && <p className={errorStyle}>{errors.sku.message}</p>}
+            {errors.sku && (
+              <p className={errorStyle}>
+                {errors.sku.message}
+              </p>
+            )}
           </div>
 
           {/* Barcode */}
           <div>
-            <label className="mb-2 block text-sm font-medium">Barcode</label>
+            <label className={labelStyle}>
+              Barcode
+            </label>
 
             <input
+              placeholder="Enter barcode"
               className={inputStyle}
               {...register("barcode", {
                 pattern: {
                   value: /^[A-Za-z0-9-]+$/,
-                  message: "Enter a valid barcode",
+                  message:
+                    "Enter a valid barcode",
                 },
               })}
             />
 
             {errors.barcode && (
-              <p className={errorStyle}>{errors.barcode.message}</p>
+              <p className={errorStyle}>
+                {errors.barcode.message}
+              </p>
             )}
           </div>
 
           {/* Category */}
           <div>
-            <label className="mb-2 block text-sm font-medium">Category</label>
+            <label className={labelStyle}>
+              Category
+            </label>
 
             <select
               className={inputStyle}
               {...register("category_id", {
-                required: "Category is required",
+                required:
+                  "Category is required",
               })}
             >
-              <option value="">Select Category</option>
+              <option value="">
+                Select Category
+              </option>
 
               {categories.map((category) => (
-                <option key={category.id} value={category.id}>
+                <option
+                  key={category.id}
+                  value={category.id}
+                >
                   {category.name}
                 </option>
               ))}
             </select>
 
             {errors.category_id && (
-              <p className={errorStyle}>{errors.category_id.message}</p>
+              <p className={errorStyle}>
+                {errors.category_id.message}
+              </p>
             )}
           </div>
 
           {/* Unit */}
           <div>
-            <label className="mb-2 block text-sm font-medium">Unit</label>
+            <label className={labelStyle}>
+              Unit
+            </label>
 
-            <select className={inputStyle} {...register("unit")}>
+            <select
+              className={inputStyle}
+              {...register("unit")}
+            >
               <option value="PCS">PCS</option>
               <option value="KG">KG</option>
-              <option value="Litre">Litre</option>
-              <option value="Pack">Pack</option>
+              <option value="Litre">
+                Litre
+              </option>
+              <option value="Pack">
+                Pack
+              </option>
             </select>
           </div>
 
           {/* Purchase Price */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className={labelStyle}>
               Purchase Price
             </label>
 
-            <input
-              type="number"
-              step="0.01"
-              className={inputStyle}
-              {...register("purchase_price", {
-                required: "Purchase price is required",
-                min: {
-                  value: 0.01,
-                  message: "Purchase price must be greater than 0",
-                },
-              })}
-            />
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">
+                Rs.
+              </span>
+
+              <input
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                className={`${inputStyle} pl-12`}
+                {...register(
+                  "purchase_price",
+                  {
+                    required:
+                      "Purchase price is required",
+                    min: {
+                      value: 0.01,
+                      message:
+                        "Purchase price must be greater than 0",
+                    },
+                  }
+                )}
+              />
+            </div>
 
             {errors.purchase_price && (
-              <p className={errorStyle}>{errors.purchase_price.message}</p>
+              <p className={errorStyle}>
+                {errors.purchase_price.message}
+              </p>
             )}
           </div>
 
           {/* Sale Price */}
           <div>
-            <label className="mb-2 block text-sm font-medium">Sale Price</label>
+            <label className={labelStyle}>
+              Sale Price
+            </label>
 
-            <input
-              type="number"
-              step="0.01"
-              className={inputStyle}
-              {...register("selling_price", {
-                required: "Sale price is required",
-                min: {
-                  value: 0.01,
-                  message: "Sale price must be greater than 0",
-                },
-              })}
-            />
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">
+                Rs.
+              </span>
+
+              <input
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                className={`${inputStyle} pl-12`}
+                {...register(
+                  "selling_price",
+                  {
+                    required:
+                      "Sale price is required",
+                    min: {
+                      value: 0.01,
+                      message:
+                        "Sale price must be greater than 0",
+                    },
+                  }
+                )}
+              />
+            </div>
 
             {errors.selling_price && (
-              <p className={errorStyle}>{errors.selling_price.message}</p>
+              <p className={errorStyle}>
+                {errors.selling_price.message}
+              </p>
             )}
           </div>
 
-          {/* Stock Quantity */}
+          {/* Stock */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className={labelStyle}>
               Stock Quantity
             </label>
 
             <input
               type="number"
               className={inputStyle}
-              {...register("stock_quantity", {
-                required: "Stock quantity is required",
-                min: {
-                  value: 0,
-                  message: "Stock quantity cannot be negative",
-                },
-              })}
+              {...register(
+                "stock_quantity",
+                {
+                  required:
+                    "Stock quantity is required",
+                  min: {
+                    value: 0,
+                    message:
+                      "Stock quantity cannot be negative",
+                  },
+                }
+              )}
             />
 
             {errors.stock_quantity && (
-              <p className={errorStyle}>{errors.stock_quantity.message}</p>
+              <p className={errorStyle}>
+                {errors.stock_quantity.message}
+              </p>
             )}
           </div>
 
           {/* Minimum Stock */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label className={labelStyle}>
               Minimum Stock Level
             </label>
 
             <input
               type="number"
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
-              {...register("min_stock_level", {
-                min: {
-                  value: 0,
-                  message: "Minimum stock level cannot be negative",
-                },
-              })}
+              className={inputStyle}
+              {...register(
+                "min_stock_level",
+                {
+                  min: {
+                    value: 0,
+                    message:
+                      "Minimum stock level cannot be negative",
+                  },
+                }
+              )}
             />
 
             {errors.min_stock_level && (
-              <p className="mt-1 text-sm text-red-500">
+              <p className={errorStyle}>
                 {errors.min_stock_level.message}
               </p>
             )}
@@ -302,20 +407,30 @@ const submitForm = async (values) => {
 
           {/* Status */}
           <div>
-            <label className="mb-2 block text-sm font-medium">Status</label>
+            <label className={labelStyle}>
+              Status
+            </label>
 
-            <select className={inputStyle} {...register("status")}>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+            <select
+              className={inputStyle}
+              {...register("status")}
+            >
+              <option value="Active">
+                Active
+              </option>
+
+              <option value="Inactive">
+                Inactive
+              </option>
             </select>
           </div>
 
-          {/* Buttons */}
-          <div className="flex justify-end gap-3 border-t border-slate-200 pt-5 sm:col-span-2">
+          {/* Footer */}
+          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:col-span-2 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-300 px-5 py-2.5 font-medium"
+              className="w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
             >
               Cancel
             </button>
@@ -323,9 +438,14 @@ const submitForm = async (values) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
-              {isSubmitting && <Loader2 size={18} className="animate-spin" />}
+              {isSubmitting && (
+                <Loader2
+                  size={17}
+                  className="animate-spin"
+                />
+              )}
 
               {isSubmitting
                 ? "Saving..."

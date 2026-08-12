@@ -5,6 +5,14 @@ import {
   Users,
   Truck,
   Loader2,
+  WalletCards,
+  TrendingUp,
+  CreditCard,
+  TriangleAlert,
+  MapPin,
+  Mail,
+  UserRound,
+  BadgeCheck,
 } from "lucide-react";
 
 import useAuth from "../hooks/useAuth";
@@ -35,192 +43,265 @@ export default function Dashboard() {
 
   const cards = [
     {
-      title: "Products",
+      title: "Total Products",
       value: summary?.total_products ?? 0,
       icon: Package,
+      iconBg: "bg-violet-50",
+      iconText: "text-violet-600",
     },
     {
       title: "Today's Orders",
       value: summary?.today_orders ?? 0,
       icon: ShoppingCart,
+      iconBg: "bg-blue-50",
+      iconText: "text-blue-600",
     },
     {
-      title: "Customers",
+      title: "Total Customers",
       value: summary?.total_customers ?? 0,
       icon: Users,
+      iconBg: "bg-emerald-50",
+      iconText: "text-emerald-600",
     },
     {
-      title: "Suppliers",
+      title: "Total Suppliers",
       value: summary?.total_suppliers ?? 0,
       icon: Truck,
+      iconBg: "bg-orange-50",
+      iconText: "text-orange-600",
+    },
+  ];
+
+  const financialStats = [
+    {
+      title: "Today's Sales",
+      value: `Rs. ${summary?.today_sales ?? "0.00"}`,
+      icon: WalletCards,
+      iconBg: "bg-blue-50",
+      iconText: "text-blue-600",
+    },
+    {
+      title: "Today's Profit",
+      value: `Rs. ${summary?.today_profit ?? "0.00"}`,
+      icon: TrendingUp,
+      iconBg: "bg-emerald-50",
+      iconText: "text-emerald-600",
+    },
+    {
+      title: "Pending Udhaar",
+      value: `Rs. ${summary?.pending_udhaar ?? "0.00"}`,
+      icon: CreditCard,
+      iconBg: "bg-amber-50",
+      iconText: "text-amber-600",
+    },
+    {
+      title: "Low Stock Products",
+      value: summary?.low_stock_count ?? 0,
+      icon: TriangleAlert,
+      iconBg: "bg-red-50",
+      iconText: "text-red-500",
     },
   ];
 
   return (
     <div className="mx-auto max-w-7xl">
-      {/* Heading */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">
-          Dashboard
-        </h1>
+      {/* Header */}
+      <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-500">
+            Overview
+          </p>
 
-        <p className="mt-1 text-sm text-slate-500">
-          Here is an overview of your shop.
-        </p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+            Good evening, {user?.name?.split(" ")[0] || "Shopkeeper"} 👋
+          </h1>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Here's what is happening in your shop today.
+          </p>
+        </div>
+
+        <div className="w-fit rounded-2xl border border-indigo-100 bg-white px-5 py-3 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Account Status
+          </p>
+
+          <div className="mt-1 flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+
+            <span className="text-sm font-semibold capitalize text-slate-800">
+              {user?.status || "--"}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="mt-6 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="mt-6 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
         </div>
       )}
 
-      {/* Main Stats */}
+      {/* Main Cards */}
       <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {cards.map((card) => {
+        {cards.map((card, index) => {
           const Icon = card.icon;
 
           return (
             <div
               key={card.title}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              style={{
+                animationDelay: `${index * 70}ms`,
+              }}
+              className="card-enter group rounded-[22px] border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(79,70,229,0.08)]"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <Icon size={22} />
+              <div className="flex items-center justify-between">
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${card.iconBg} ${card.iconText}`}
+                >
+                  <Icon size={22} />
+                </div>
+
+                <span className="h-2 w-2 rounded-full bg-slate-200 transition group-hover:bg-indigo-400" />
               </div>
 
               <p className="mt-5 text-sm font-medium text-slate-500">
                 {card.title}
               </p>
 
-              <div className="mt-1 min-h-9">
+              <div className="mt-1 min-h-10">
                 {loading ? (
                   <Loader2
-                    size={24}
-                    className="animate-spin text-blue-600"
+                    size={23}
+                    className="animate-spin text-indigo-500"
                   />
                 ) : (
-                  <h2 className="text-3xl font-bold text-slate-900">
+                  <h2 className="text-3xl font-bold tracking-tight text-slate-950">
                     {card.value}
                   </h2>
                 )}
               </div>
+
+              <p className="mt-3 text-xs text-slate-400">
+                Current shop overview
+              </p>
             </div>
           );
         })}
       </div>
 
-      {/* Extra Stats */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-sm text-slate-500">
-            Today's Sales
+      {/* Financial Summary */}
+      <section className="mt-6 rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgba(15,23,42,0.04)] sm:p-6">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.17em] text-indigo-500">
+            Financial Summary
           </p>
 
-          <p className="mt-1 text-lg font-bold text-slate-900">
-            Rs. {summary?.today_sales ?? "0.00"}
-          </p>
+          <h2 className="mt-1 text-lg font-semibold text-slate-900">
+            Today's business performance
+          </h2>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-sm text-slate-500">
-            Today's Profit
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {financialStats.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <div
+                key={item.title}
+                className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 transition-all duration-200 hover:bg-white hover:shadow-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.iconBg} ${item.iconText}`}
+                  >
+                    <Icon size={19} />
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-medium text-slate-500">
+                      {item.title}
+                    </p>
+
+                    <p className="mt-1 text-lg font-bold text-slate-950">
+                      {item.value}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Shop Info */}
+      <section className="mt-6 overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+        <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.17em] text-indigo-500">
+            Shop Information
           </p>
 
-          <p className="mt-1 text-lg font-bold text-slate-900">
-            Rs. {summary?.today_profit ?? "0.00"}
-          </p>
+          <h2 className="mt-1 text-lg font-semibold text-slate-900">
+            Account and shop details
+          </h2>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-sm text-slate-500">
-            Pending Udhaar
-          </p>
+        <div className="grid gap-0 sm:grid-cols-2">
+          <InfoItem
+            icon={UserRound}
+            label="Shopkeeper"
+            value={user?.name || "--"}
+          />
 
-          <p className="mt-1 text-lg font-bold text-slate-900">
-            Rs. {summary?.pending_udhaar ?? "0.00"}
-          </p>
+          <InfoItem
+            icon={Mail}
+            label="Email"
+            value={user?.email || "--"}
+          />
+
+          <InfoItem
+            icon={MapPin}
+            label="Location"
+            value={user?.location || "--"}
+          />
+
+          <InfoItem
+            icon={BadgeCheck}
+            label="Role"
+            value={user?.role || "--"}
+            capitalize
+          />
         </div>
+      </section>
+    </div>
+  );
+}
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-sm text-slate-500">
-            Low Stock Products
-          </p>
-
-          <p className="mt-1 text-lg font-bold text-slate-900">
-            {summary?.low_stock_count ?? 0}
-          </p>
-        </div>
+function InfoItem({
+  icon: Icon,
+  label,
+  value,
+  capitalize = false,
+}) {
+  return (
+    <div className="flex items-start gap-4 border-b border-slate-100 p-5 last:border-b-0 sm:p-6 sm:odd:border-r">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+        <Icon size={18} />
       </div>
 
-      {/* Shop Information */}
-      <div className="mt-8">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">
-                Shop Information
-              </h2>
+      <div className="min-w-0">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          {label}
+        </p>
 
-              <p className="mt-1 text-sm text-slate-500">
-                Your account and shop details
-              </p>
-            </div>
-
-            <span
-              className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-                user?.status?.toLowerCase() === "active"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-slate-100 text-slate-600"
-              }`}
-            >
-              {user?.status || "--"}
-            </span>
-          </div>
-
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                Shopkeeper
-              </p>
-
-              <p className="mt-1 font-semibold text-slate-800">
-                {user?.name || "--"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                Email
-              </p>
-
-              <p className="mt-1 break-all font-semibold text-slate-800">
-                {user?.email || "--"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                Location
-              </p>
-
-              <p className="mt-1 font-semibold text-slate-800">
-                {user?.location || "--"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                Role
-              </p>
-
-              <p className="mt-1 font-semibold capitalize text-slate-800">
-                {user?.role || "--"}
-              </p>
-            </div>
-          </div>
-        </section>
+        <p
+          className={`mt-1 break-all font-semibold text-slate-800 ${
+            capitalize ? "capitalize" : ""
+          }`}
+        >
+          {value}
+        </p>
       </div>
     </div>
   );

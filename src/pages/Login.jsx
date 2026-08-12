@@ -65,63 +65,118 @@ export default function Login() {
   return (
     <main className="min-h-screen bg-slate-100">
       <div className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-xl lg:grid-cols-2">
-          
-          {/* Desktop Branding */}
-          <div className="hidden bg-blue-600 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-            <div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15">
+        <div className="grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-slate-200/70 bg-white shadow-[0_25px_70px_rgba(15,23,42,0.12)] lg:grid-cols-2">
+
+          {/* Left Branding Section */}
+          <div className="relative hidden overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+
+            {/* Decorative glow */}
+            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
+
+            <div className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-violet-500/10 blur-3xl" />
+
+            <div className="relative z-10">
+              {/* Logo */}
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/10 shadow-lg backdrop-blur">
                 <ShoppingBasket size={28} />
               </div>
 
-              <h1 className="mt-8 text-4xl font-bold">
+              <p className="mt-10 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-300">
+                Shopkeeper Portal
+              </p>
+
+              <h1 className="mt-3 text-4xl font-bold tracking-tight">
                 Karyana Shop
               </h1>
 
-              <p className="mt-4 max-w-sm text-blue-100">
+              <p className="mt-5 max-w-sm text-[15px] leading-7 text-slate-300">
                 Manage your products, customers,
                 categories and suppliers from one
                 simple shopkeeper portal.
               </p>
+
+              {/* Small feature cards */}
+              <div className="mt-9 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
+                  <p className="text-sm font-semibold text-white">
+                    Inventory
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-400">
+                    Products & stock
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm">
+                  <p className="text-sm font-semibold text-white">
+                    Business
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-400">
+                    Customers & suppliers
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <p className="text-sm text-blue-200">
-              Simple. Fast. Organized.
-            </p>
+            <div className="relative z-10">
+              <div className="mb-4 h-px bg-gradient-to-r from-white/20 to-transparent" />
+
+              <p className="text-sm text-slate-400">
+                Simple. Fast. Organized.
+              </p>
+            </div>
           </div>
 
           {/* Login Section */}
-          <div className="p-6 sm:p-10 lg:p-12">
+          <div className="flex items-center p-6 sm:p-10 lg:p-12">
             <div className="mx-auto w-full max-w-md">
-              
-        
 
-              <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+              {/* Mobile Logo */}
+              <div className="mb-8 flex items-center gap-3 lg:hidden">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white">
+                  <ShoppingBasket size={21} />
+                </div>
+
+                <div>
+                  <p className="font-bold text-slate-950">
+                    Karyana Shop
+                  </p>
+
+                  <p className="text-xs text-slate-400">
+                    Shopkeeper Portal
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-500">
+                Welcome
+              </p>
+
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
                 Welcome back
               </h2>
 
-              <p className="mt-2 text-sm text-slate-500">
-                Sign in to your shopkeeper portal.
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Sign in to continue to your shopkeeper portal.
               </p>
 
               <form
                 onSubmit={handleSubmit(handleLogin)}
                 className="mt-8 space-y-5"
               >
-                
                 {/* Email */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
                     Email
                   </label>
 
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50"
                     {...register("email", {
-                      required:
-                        "Email is required",
+                      required: "Email is required",
                       pattern: {
                         value:
                           /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -132,7 +187,7 @@ export default function Login() {
                   />
 
                   {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">
+                    <p className="mt-1.5 text-xs font-medium text-red-500">
                       {errors.email.message}
                     </p>
                   )}
@@ -140,7 +195,7 @@ export default function Login() {
 
                 {/* Password */}
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
                     Password
                   </label>
 
@@ -152,7 +207,7 @@ export default function Login() {
                           : "password"
                       }
                       placeholder="Enter your password"
-                      className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-12 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 pr-12 text-sm text-slate-800 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50"
                       {...register("password", {
                         required:
                           "Password is required",
@@ -171,22 +226,24 @@ export default function Login() {
                           !showPassword
                         )
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                      aria-label={
+                        showPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
                     >
                       {showPassword ? (
-                        <EyeOff size={19} />
+                        <EyeOff size={18} />
                       ) : (
-                        <Eye size={19} />
+                        <Eye size={18} />
                       )}
                     </button>
                   </div>
 
                   {errors.password && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {
-                        errors.password
-                          .message
-                      }
+                    <p className="mt-1.5 text-xs font-medium text-red-500">
+                      {errors.password.message}
                     </p>
                   )}
                 </div>
@@ -195,7 +252,7 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 font-semibold text-white shadow-[0_10px_25px_rgba(15,23,42,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-600 hover:shadow-[0_14px_30px_rgba(79,70,229,0.18)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isSubmitting && (
                     <Loader2
@@ -210,9 +267,13 @@ export default function Login() {
                 </button>
               </form>
 
-              <p className="mt-8 text-center text-xs text-slate-400">
-                Karyana Shopkeeper Portal
-              </p>
+              <div className="mt-8 flex items-center justify-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+
+                <p className="text-xs text-slate-400">
+                  Karyana Shopkeeper Portal
+                </p>
+              </div>
             </div>
           </div>
         </div>

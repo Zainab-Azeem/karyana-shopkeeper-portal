@@ -8,7 +8,7 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-[#f7f8fc]">
       <Sidebar
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
@@ -17,7 +17,7 @@ export default function Layout() {
       <div className="min-w-0 flex-1">
         <Topbar setMenuOpen={setMenuOpen} />
 
-        <main className="p-4 sm:p-5 md:p-8">
+        <main className="page-enter p-4 sm:p-5 md:p-7 lg:p-8">
           <Outlet />
         </main>
       </div>

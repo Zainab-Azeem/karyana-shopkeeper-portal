@@ -28,10 +28,7 @@ export default function Categories() {
 
   const extractList = (response) => {
     if (Array.isArray(response)) return response;
-
-    if (Array.isArray(response?.data)) {
-      return response.data;
-    }
+    if (Array.isArray(response?.data)) return response.data;
 
     if (Array.isArray(response?.data?.categories)) {
       return response.data.categories;
@@ -91,8 +88,10 @@ export default function Categories() {
       toast.success("Category deleted");
       loadCategories();
     } catch (error) {
-      console.log(error);
-      toast.error("Unable to delete category");
+      toast.error(
+        error.response?.data?.message ||
+          "Unable to delete category"
+      );
     }
   };
 
@@ -108,7 +107,7 @@ export default function Categories() {
   };
 
   const filteredCategories = categories.filter((category) => {
-    const value = search.trim().toLowerCase();
+    const value = search.toLowerCase();
 
     return (
       category.name?.toLowerCase().includes(value) ||
@@ -118,15 +117,18 @@ export default function Categories() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      {/* Heading */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-500">
+            Catalogue
+          </p>
+
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
             Categories
           </h1>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Organize products into categories.
+          <p className="mt-2 text-sm text-slate-500">
+            Organize your products into clear groups.
           </p>
         </div>
 
@@ -135,38 +137,54 @@ export default function Categories() {
             setEditing(null);
             setFormOpen(true);
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700 sm:w-auto"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-600 sm:w-auto"
         >
-          <Plus size={19} />
+          <Plus size={18} />
           Add Category
         </button>
       </div>
 
       {/* Search */}
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="relative w-full sm:max-w-xl">
+      <section className="mt-7 rounded-[22px] border border-slate-200/80 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.04)] sm:p-5">
+        <div className="relative max-w-xl">
           <Search
             size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
           />
 
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search categories..."
-            className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50"
           />
         </div>
-      </div>
+      </section>
 
-      {/* Category List */}
-      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {/* Table */}
+      <section className="mt-6 overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+            <Tags size={18} />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              Category Catalogue
+            </p>
+
+            <p className="text-xs text-slate-400">
+              {filteredCategories.length} categories
+            </p>
+          </div>
+        </div>
+
         {loading ? (
-          <div className="flex min-h-72 items-center justify-center p-6">
+          <div className="flex min-h-72 items-center justify-center">
             <div className="text-center">
               <Loader2
                 size={32}
-                className="mx-auto animate-spin text-blue-600"
+                className="mx-auto animate-spin text-indigo-500"
               />
 
               <p className="mt-3 text-sm text-slate-500">
@@ -175,54 +193,37 @@ export default function Categories() {
             </div>
           </div>
         ) : error ? (
-          <div className="flex min-h-72 flex-col items-center justify-center p-6 text-center">
+          <div className="flex min-h-72 flex-col items-center justify-center">
             <p className="font-medium text-red-600">
               {error}
             </p>
 
             <button
               onClick={loadCategories}
-              className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+              className="mt-4 rounded-xl bg-slate-950 px-4 py-2.5 text-white"
             >
               Try Again
             </button>
           </div>
         ) : filteredCategories.length === 0 ? (
-          <div className="flex min-h-72 flex-col items-center justify-center p-6 text-center">
-            <Tags size={42} className="text-slate-300" />
+          <div className="flex min-h-72 flex-col items-center justify-center p-6">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50 text-violet-300">
+              <Tags size={30} />
+            </div>
 
             <h3 className="mt-4 font-semibold text-slate-800">
               No categories found
             </h3>
-
-            <button
-              onClick={() => {
-                setEditing(null);
-                setFormOpen(true);
-              }}
-              className="mt-4 text-sm font-medium text-blue-600"
-            >
-              Add Category
-            </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px]">
-              <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
+              <thead className="bg-slate-50/80 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                 <tr>
-                  <th className="px-5 py-4 sm:px-6">
-                    Category
-                  </th>
-
-                  <th className="px-5 py-4 sm:px-6">
-                    Description
-                  </th>
-
-                  <th className="px-5 py-4 sm:px-6">
-                    Status
-                  </th>
-
-                  <th className="px-5 py-4 text-right sm:px-6">
+                  <th className="px-6 py-4">Category</th>
+                  <th className="px-6 py-4">Description</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">
                     Actions
                   </th>
                 </tr>
@@ -232,61 +233,67 @@ export default function Categories() {
                 {filteredCategories.map((category) => (
                   <tr
                     key={category.id}
-                    className="border-t border-slate-100 transition hover:bg-slate-50"
+                    className="border-t border-slate-100 transition hover:bg-indigo-[0.025]"
                   >
-                    <td className="px-5 py-4 sm:px-6">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {category.image ? (
                           <img
                             src={category.image}
                             alt={category.name}
-                            className="h-11 w-11 shrink-0 rounded-lg object-cover"
+                            className="h-11 w-11 rounded-xl border border-slate-100 object-cover"
                           />
                         ) : (
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                            <Tags size={20} />
+                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-50 to-indigo-50 text-violet-600">
+                            <Tags size={19} />
                           </div>
                         )}
 
-                        <p className="font-medium text-slate-900">
+                        <p className="font-semibold text-slate-900">
                           {category.name}
                         </p>
                       </div>
                     </td>
 
-                    <td className="max-w-md px-5 py-4 text-sm text-slate-500 sm:px-6">
+                    <td className="max-w-md px-6 py-4 text-sm text-slate-500">
                       {category.description || "No description"}
                     </td>
 
-                    <td className="px-5 py-4 sm:px-6">
+                    <td className="px-6 py-4">
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${
                           category.status === "Active"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-slate-100 text-slate-600"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-slate-100 text-slate-500"
                         }`}
                       >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            category.status === "Active"
+                              ? "bg-emerald-500"
+                              : "bg-slate-400"
+                          }`}
+                        />
+
                         {category.status}
                       </span>
                     </td>
 
-                    <td className="px-5 py-4 sm:px-6">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-1.5">
                         <button
                           onClick={() => {
                             setEditing(category);
                             setFormOpen(true);
                           }}
-                          className="rounded-lg p-2 text-slate-500 hover:bg-amber-50 hover:text-amber-600"
-                          title="Edit"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-amber-50 hover:text-amber-600"
                         >
                           <Pencil size={17} />
                         </button>
 
                         <button
                           onClick={() => handleDelete(category)}
-                          className="rounded-lg p-2 text-slate-500 hover:bg-red-50 hover:text-red-600"
-                          title="Delete"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition hover:bg-red-50 hover:text-red-500"
                         >
                           <Trash2 size={17} />
                         </button>
@@ -298,9 +305,8 @@ export default function Categories() {
             </table>
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Add / Edit Form */}
       {formOpen && (
         <CategoryForm
           category={editing}
