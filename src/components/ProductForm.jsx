@@ -4,6 +4,7 @@ import { X, Loader2 } from "lucide-react";
 
 import { addProduct, updateProduct } from "../api/ProductApi";
 import useAuth from "../hooks/useAuth";
+import { toast } from "react-toastify";
 
 export default function ProductForm({
   product,
@@ -50,7 +51,8 @@ export default function ProductForm({
     }
   }, [product, reset]);
 
-  const submitForm = async (values) => {
+const submitForm = async (values) => {
+  try {
     const formData = new FormData();
 
     formData.append("shop_id", user?.shop_id);
@@ -74,7 +76,14 @@ export default function ProductForm({
     }
 
     onSuccess();
-  };
+  } catch (error) {
+    const message =
+      error.response?.data?.message ||
+      "Unable to save product.";
+
+    toast.error(message);
+  }
+};
 
   const inputStyle =
     "w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600";
@@ -123,42 +132,29 @@ export default function ProductForm({
               })}
             />
 
-            {errors.name && (
-              <p className={errorStyle}>
-                {errors.name.message}
-              </p>
-            )}
+            {errors.name && <p className={errorStyle}>{errors.name.message}</p>}
           </div>
 
           {/* SKU */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              SKU
-            </label>
+            <label className="mb-2 block text-sm font-medium">SKU</label>
 
             <input
               className={inputStyle}
               {...register("sku", {
                 pattern: {
                   value: /^[A-Za-z0-9_-]+$/,
-                  message:
-                    "SKU can only contain letters, numbers, - and _",
+                  message: "SKU can only contain letters, numbers, - and _",
                 },
               })}
             />
 
-            {errors.sku && (
-              <p className={errorStyle}>
-                {errors.sku.message}
-              </p>
-            )}
+            {errors.sku && <p className={errorStyle}>{errors.sku.message}</p>}
           </div>
 
           {/* Barcode */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Barcode
-            </label>
+            <label className="mb-2 block text-sm font-medium">Barcode</label>
 
             <input
               className={inputStyle}
@@ -171,17 +167,13 @@ export default function ProductForm({
             />
 
             {errors.barcode && (
-              <p className={errorStyle}>
-                {errors.barcode.message}
-              </p>
+              <p className={errorStyle}>{errors.barcode.message}</p>
             )}
           </div>
 
           {/* Category */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Category
-            </label>
+            <label className="mb-2 block text-sm font-medium">Category</label>
 
             <select
               className={inputStyle}
@@ -192,32 +184,22 @@ export default function ProductForm({
               <option value="">Select Category</option>
 
               {categories.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
-                >
+                <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
             </select>
 
             {errors.category_id && (
-              <p className={errorStyle}>
-                {errors.category_id.message}
-              </p>
+              <p className={errorStyle}>{errors.category_id.message}</p>
             )}
           </div>
 
           {/* Unit */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Unit
-            </label>
+            <label className="mb-2 block text-sm font-medium">Unit</label>
 
-            <select
-              className={inputStyle}
-              {...register("unit")}
-            >
+            <select className={inputStyle} {...register("unit")}>
               <option value="PCS">PCS</option>
               <option value="KG">KG</option>
               <option value="Litre">Litre</option>
@@ -239,24 +221,19 @@ export default function ProductForm({
                 required: "Purchase price is required",
                 min: {
                   value: 0.01,
-                  message:
-                    "Purchase price must be greater than 0",
+                  message: "Purchase price must be greater than 0",
                 },
               })}
             />
 
             {errors.purchase_price && (
-              <p className={errorStyle}>
-                {errors.purchase_price.message}
-              </p>
+              <p className={errorStyle}>{errors.purchase_price.message}</p>
             )}
           </div>
 
           {/* Sale Price */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Sale Price
-            </label>
+            <label className="mb-2 block text-sm font-medium">Sale Price</label>
 
             <input
               type="number"
@@ -266,16 +243,13 @@ export default function ProductForm({
                 required: "Sale price is required",
                 min: {
                   value: 0.01,
-                  message:
-                    "Sale price must be greater than 0",
+                  message: "Sale price must be greater than 0",
                 },
               })}
             />
 
             {errors.selling_price && (
-              <p className={errorStyle}>
-                {errors.selling_price.message}
-              </p>
+              <p className={errorStyle}>{errors.selling_price.message}</p>
             )}
           </div>
 
@@ -292,16 +266,13 @@ export default function ProductForm({
                 required: "Stock quantity is required",
                 min: {
                   value: 0,
-                  message:
-                    "Stock quantity cannot be negative",
+                  message: "Stock quantity cannot be negative",
                 },
               })}
             />
 
             {errors.stock_quantity && (
-              <p className={errorStyle}>
-                {errors.stock_quantity.message}
-              </p>
+              <p className={errorStyle}>{errors.stock_quantity.message}</p>
             )}
           </div>
 
@@ -313,18 +284,17 @@ export default function ProductForm({
 
             <input
               type="number"
-              className={inputStyle}
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
               {...register("min_stock_level", {
                 min: {
                   value: 0,
-                  message:
-                    "Minimum stock level cannot be negative",
+                  message: "Minimum stock level cannot be negative",
                 },
               })}
             />
 
             {errors.min_stock_level && (
-              <p className={errorStyle}>
+              <p className="mt-1 text-sm text-red-500">
                 {errors.min_stock_level.message}
               </p>
             )}
@@ -332,14 +302,9 @@ export default function ProductForm({
 
           {/* Status */}
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Status
-            </label>
+            <label className="mb-2 block text-sm font-medium">Status</label>
 
-            <select
-              className={inputStyle}
-              {...register("status")}
-            >
+            <select className={inputStyle} {...register("status")}>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
@@ -360,12 +325,7 @@ export default function ProductForm({
               disabled={isSubmitting}
               className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-60"
             >
-              {isSubmitting && (
-                <Loader2
-                  size={18}
-                  className="animate-spin"
-                />
-              )}
+              {isSubmitting && <Loader2 size={18} className="animate-spin" />}
 
               {isSubmitting
                 ? "Saving..."
